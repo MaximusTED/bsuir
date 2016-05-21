@@ -12,7 +12,7 @@
 #include <vector>
 
 double f(double x) {
-  return pow(x, 2) + 5 * cos(x);
+  return std::pow(x, 2) + 5 * std::cos(x);
 }
 
 std::vector<double> dY_precise(const std::vector<double>& X) {
@@ -21,7 +21,7 @@ std::vector<double> dY_precise(const std::vector<double>& X) {
 
   // Точное значение 1 производной.
   for (std::size_t i = 0; i < n; i++)
-    DY[i] = 2 * X[i] - 5 * sin(X[i]);
+    DY[i] = 2 * X[i] - 5 * std::sin(X[i]);
 
   return DY;
 }
@@ -32,13 +32,13 @@ std::vector<double> d2Y_precise(const std::vector<double>& X) {
 
   // Точное значение 2 производной.
   for (std::size_t i = 0; i < n; i++)
-    D2Y[i] = 2 - 5 * cos(X[i]);
+    D2Y[i] = 2 - 5 * std::cos(X[i]);
 
   return D2Y;
 }
 
 double integral_precise(double x) {
-  return pow(x, 3) / 3 + 5 * sin(x);
+  return std::pow(x, 3) / 3 + 5 * std::sin(x);
 }
 
 double integral_precise(double a, double b) {
@@ -65,7 +65,7 @@ std::vector<double> d2Y_approximate(const std::vector<double>& Y, double h) {
   std::vector<double> d2Y = std::vector<double>(n);
 
   // В крайних точках не считаем.
-  d2Y[0] = d2Y[n - 1] = nan("");
+  d2Y[0] = d2Y[n - 1] = std::nan("");
 
   // Аппроксимация второй производной.
   for (std::size_t i = 1; i < n - 1; i++)
