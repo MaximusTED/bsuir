@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 //
 // Subject: Algorithms and Data structures (AaDs).
-// Lab work 2_2_1: User Functions.
+// Lab work 2.1: User Functions.
 
 #include <cstdlib>   // For EXIT_SUCCESS.
 #include <iostream>

@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 //
 // Subject: Algorithms and Data structures (AaDs).
-// Lab work 2_2_2: System of linear equations (Zeidel elimination).
+// Lab work 2.2.2: System of linear equations (Zeidel elimination).
 
 // Методы простой итерации, Зейделя – по вариантам, МП4.
 //

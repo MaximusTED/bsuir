@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 //
 // Subject: Algorithms and Data structures (AaDs).
-// Lab work 2_2_1: System of linear equations (Gaussian elimination).
+// Lab work 2.2.1: System of linear equations (Gaussian elimination).
 
 // Метод Гаусса, всем один – данные по вариантам, МП4.
 //
