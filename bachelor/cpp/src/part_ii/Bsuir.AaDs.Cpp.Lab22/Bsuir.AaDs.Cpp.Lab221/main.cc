@@ -31,12 +31,8 @@
 
 namespace {
 
-using namespace linear_equations;
-
 template<typename T>
 int run_main() {
-  using namespace linear_equations;
-
   std_extensions::nullostream null_cout;
 
   std::size_t n;
@@ -45,30 +41,32 @@ int run_main() {
   int result_code;
 
   // Читаем с клавиатуры.
-  std::tie(matrix, b, n, result_code) = in_matrixes<T>(std::cin, std::cout);
+  std::tie(matrix, b, n, result_code) = linear_equations::
+    in_matrixes<T>(std::cin, std::cout);
   if (result_code != EXIT_SUCCESS) return result_code;
 
   // Пишем в файл данные.
   std::ofstream out_data_file("data.txt");
   if (!out_data_file) return EXIT_FAILURE;
 
-  out_matrixes(out_data_file, matrix, b);
+  linear_equations::out_matrixes(out_data_file, matrix, b);
 
-  // Читаем с файла.
+  // Читаем из файла.
   std::ifstream in_data_file("data.txt");
   if (!in_data_file) return EXIT_FAILURE;
 
-  std::tie(matrix, b, n, result_code) = in_matrixes<T>(in_data_file, null_cout);
+  std::tie(matrix, b, n, result_code) = linear_equations::
+    in_matrixes<T>(in_data_file, null_cout);
   if (result_code != EXIT_SUCCESS) return result_code;
 
   // Считаем по Гауссу.
-  std::vector<T> x = evaluate_by_gauss(matrix, b);
+  std::vector<T> x = linear_equations::evaluate_by_gauss(matrix, b);
 
   // Пишем в файл результаты.
   std::ofstream out_result_file("result.txt");
   if (!out_result_file) return EXIT_FAILURE;
 
-  out_roots(out_data_file, x);
+  linear_equations::out_roots(out_data_file, x);
 
   return EXIT_SUCCESS;
 }

@@ -13,10 +13,10 @@
 
 int main() {
   std::size_t vector_size;
-  int result_code = vector_processor::read_vector_size(vector_size);
+  int result_code = vector_processor::read_vector_size(&vector_size);
 
   if (result_code != EXIT_SUCCESS) {
-    std::cerr << "incorrect vector size." << std::endl;
+    std::cerr << "Incorrect vector size." << std::endl;
     return result_code;
   }
 
@@ -24,7 +24,7 @@ int main() {
   result_code = vector_processor::read_vector(user_vector, vector_size);
 
   if (result_code != EXIT_SUCCESS) {
-    std::cerr << "can't read vector." << std::endl;
+    std::cerr << "Can't read vector." << std::endl;
     return result_code;
   }
 
@@ -36,3 +36,22 @@ int main() {
 
   return vector_processor::notify_process_result(result_code, sum, count);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

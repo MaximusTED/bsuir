@@ -6,6 +6,7 @@
 // Lab work 3: Cycles programming.
 
 #include <cmath>
+#include <cstdlib>   // for EXIT_*
 #include <iostream>
 #include <iomanip>
 
@@ -18,22 +19,24 @@ int main() {
   std::cout << "n: "; std::cin >> n;
 
   double x = a;
-  double h = (b - a) / 10;
+  const double h = (b - a) / 10;
+
+  std::cout.width(15);
 
   do {
-    double s = 1, p = 1;
+    double s{1}, p{1};
 
     for (int i = 1; i <= n; i++) {
       p *= (-x * x) / ((2.0 * i - 1) * (2 * i));
       s += p;
     }
 
-    double y = cos(x);
+    const double y = cos(x);
 
-    std::cout << std::setw(15) << x
-              << std::setw(15) << y
-              << std::setw(15) << s
-              << std::setw(15) << y - s
+    std::cout << x
+              << y
+              << s
+              << y - s
               << std::endl;
 
     x += h;
@@ -41,5 +44,5 @@ int main() {
 
   std::cout << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }

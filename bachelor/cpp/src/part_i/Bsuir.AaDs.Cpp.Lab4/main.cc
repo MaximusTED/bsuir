@@ -5,69 +5,65 @@
 // Subject: Algorithms and Data structures (AaDs).
 // Lab work 4: Dimensional arrays.
 
-#include <iostream> 
+#include <algorithm>
+#include <array>
+#include <cstdlib>   // for EXIT_*
+#include <iostream>
+
+template<typename T, typename Y>
+constexpr inline T implicit_cast(const Y& value) {
+  return value;
+}
 
 int main() {
-  constexpr int array_max_size = 100;
+  std::array<double, 100> array_to_sort;
+  int raw_array_size;
 
-  double array_to_sort[array_max_size];
-  int array_size;
-
-  std::cout << "Vvedite razmer massiva (ne bolshe " 
-            << array_max_size 
+  std::cout << "Type in array size: (ne bolshe "
+            << array_to_sort.size()
             << "): ";
-  std::cin >> array_size;
+  std::cin >> raw_array_size;
 
-  if (array_size < 1 || array_size > array_max_size) {
+  if (raw_array_size < 1 || 
+      implicit_cast<std::size_t>(raw_array_size) > array_to_sort.size()) {
     std::cerr << "Razmer massiva dolgen bit' >= 1, no <= "
-              << array_max_size 
+              << array_to_sort.size()
               << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-  for (int i = 0; i < array_size; i++) {
-    std::cout << "Vvedite "
-              << i + 1 
-              << "-j element: ";
+  std::cout << "Type in array items:" << std::endl;
+
+  const std::size_t array_size = implicit_cast<std::size_t>(raw_array_size);
+
+  for (std::size_t i = 0; i < array_size; i++) {
     std::cin >> array_to_sort[i];
   }
 
-  std::cout << "Vveden massiv:" << std::endl;
+  std::cout << "Typed array:" << std::endl;
 
-  for (int i = 0; i < array_size; i++) {
-    std::cout << i + 1
-              << "-j element = " 
-              << array_to_sort[i] 
-              << std::endl;
-  }
+  for (std::size_t i = 0; i < array_size; i++) {
+    std::cout << array_to_sort[i] << std::endl;
+  }  
 
   // Veeery slow sort. O(1 / 2 * n * (n - 1)) ~ O(n^2).
-  for (int g = 0; g < array_size - 1; g++) {
-    int min_element_index = g;
+  for (std::size_t g = 0; g < array_size - 1; g++) {
+    std::size_t min_element_index = g;
 
-    for (int i = g + 1; i < array_size; i++) {
+    for (std::size_t i = g + 1; i < array_size; i++) {
       if (array_to_sort[min_element_index] > array_to_sort[i]) {
         min_element_index = i;
       }
     }
 
-    double swap_element = array_to_sort[g];
-    double min_element = array_to_sort[min_element_index];
-
-    if (swap_element != min_element) {
-      array_to_sort[g] = min_element;
-      array_to_sort[min_element_index] = swap_element;
-    }
+    std::swap(array_to_sort[g], array_to_sort[min_element_index]);
   }
 
-  std::cout << "Resultat:" << std::endl;
+  std::cout << "Sorted array:" << std::endl;
 
-  for (int i = 0; i < array_size; i++) {
-    std::cout << i + 1
-              << "-j element = "
-              << array_to_sort[i] 
-              << std::endl;
+  for (std::size_t i = 0; i < array_size; i++) {
+    std::cout << array_to_sort[i] << std::endl;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }

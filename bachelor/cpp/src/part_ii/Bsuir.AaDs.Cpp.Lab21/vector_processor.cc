@@ -13,22 +13,23 @@
 
 namespace vector_processor {
 
-int read_vector_size(std::size_t &vector_size) {
-  int raw_vector_size;
-
-  std::cout << "vector size: ";
-  if (!(std::cin >> raw_vector_size)) {
-    std::cerr << "vector size should be int." << std::endl;
+int read_vector_size(std::size_t *vector_size) {
+  if (vector_size == nullptr) {
     return -EINVAL;
   }
 
-  if (raw_vector_size <= 0) {
-    std::cerr << "vector size " << raw_vector_size
-      << "should be positive." << std::endl;
+  std::cout << "Vector size: ";
+  if (!(std::cin >> *vector_size)) {
+    std::cerr << "Vector size should be int." << std::endl;
     return -EINVAL;
   }
 
-  vector_size = static_cast<std::size_t>(raw_vector_size);
+  if (vector_size == 0) {
+    std::cerr << "Vector size " << vector_size
+      << "Should be positive." << std::endl;
+    return -EINVAL;
+  }
+
   return EXIT_SUCCESS;
 }
 

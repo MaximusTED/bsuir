@@ -34,8 +34,6 @@ namespace {
 
 template<typename T>
 int run_main() {
-  using namespace linear_equations;
-
   std_extensions::nullostream null_cout;
 
   std::size_t n;
@@ -46,36 +44,39 @@ int run_main() {
   T e;
 
   // Читаем с клавиатуры.
-  std::tie(matrix, b, n, result_code) = in_matrixes(std::cin, std::cout, &e);
+  std::tie(matrix, b, n, result_code) = linear_equations::
+    in_matrixes(std::cin, std::cout, &e);
   if (result_code != EXIT_SUCCESS) return result_code;
 
   // Пишем в файл данные.
   std::ofstream out_data_file("data.txt");
   if (!out_data_file) return EXIT_FAILURE;
 
-  out_matrixes(out_data_file, matrix, b, &e);
+  linear_equations::out_matrixes(out_data_file, matrix, b, &e);
 
-  // Читаем с файла.
+  // Читаем из файла.
   std::ifstream in_data_file("data.txt");
   if (!in_data_file) return EXIT_FAILURE;
 
-  std::tie(matrix, b, n, result_code) = in_matrixes(in_data_file, null_cout, &e);
+  std::tie(matrix, b, n, result_code) = linear_equations::
+    in_matrixes(in_data_file, null_cout, &e);
   if (result_code != EXIT_SUCCESS) return result_code;
 
   std::size_t k;
   const T w = 1;
 
   // Считаем по Зейделю.
-  const std::vector<T> x = evaluate_by_zeidel(matrix, b, e, w, &k);
+  const std::vector<T> x = linear_equations::
+    evaluate_by_zeidel(matrix, b, e, w, &k);
 
   // Считаем невязку.
-  const T residual = evaluate_residual(matrix, b, x);
+  const T residual = linear_equations::evaluate_residual(matrix, b, x);
 
   // Пишем в файл результаты.
   std::ofstream out_result_file("result.txt");
   if (!out_result_file) return EXIT_FAILURE;
 
-  out_roots(out_result_file, x, &residual, &w, &k);
+  linear_equations::out_roots(out_result_file, x, &residual, &w, &k);
 
   return 0;
 }

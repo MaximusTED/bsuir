@@ -37,7 +37,7 @@ inline int random_value() {
  * @param [in] vector_size The read vector size.
  * @return EXIT_SUCCESS on success, otherwise failure code.
  */
-int read_vector_size(std::size_t &vector_size);
+int read_vector_size(std::size_t *vector_size);
 
 /**
  * Prompts user and reads vector.
@@ -54,7 +54,7 @@ template<typename T>
 int read_vector(std::vector<T> &user_vector, std::size_t vector_size) {
   int fill_type = 0;
 
-  std::cout << "vector fill type (1 - random, 2 - manual type): ";
+  std::cout << "Vector fill type (1 - random, 2 - manual type): ";
   std::cin >> fill_type;
 
   switch (fill_type) {
@@ -63,22 +63,22 @@ int read_vector(std::vector<T> &user_vector, std::size_t vector_size) {
 
     for (std::size_t i = 0; i < vector_size; i++) {
       user_vector[i] = details::random_value();
-      std::cout << i + 1 << " element: " << user_vector[i] << std::endl;
+      std::cout << i + 1 << " Element: " << user_vector[i] << std::endl;
     }
     break;
 
   case 2:
     for (std::size_t i = 0; i < vector_size; i++) {
-      std::cout << i + 1 << " element: ";
+      std::cout << i + 1 << " Element: ";
       if (!(std::cin >> user_vector[i])) {
-        std::cerr << "vector element should be int." << std::endl;
+        std::cerr << "Vector element should be int." << std::endl;
         return -EINVAL;
       }
     }
     break;
 
   default:
-    std::cerr << "incorrect fill type. Allowed values: 1, 2." << std::endl;
+    std::cerr << "Incorrect fill type. Allowed values: 1, 2." << std::endl;
     return -EINVAL;
   }
 
@@ -168,7 +168,7 @@ int notify_process_result(int result_code, T sum, std::size_t count) {
     break;
 
   default:
-    std::cerr << "unknown processing result: "
+    std::cerr << "Unknown processing result: "
       << result_code << std::endl;
     break;
   }

@@ -5,28 +5,37 @@
 // Subject: Algorithms and Data structures (AaDs).
 // Lab work 6: Programming with Strings.
 
+#include <algorithm>
 #include <iostream>
+#include <string>
 
 int main() {
-  char input_string[32];
-  int input_count = sizeof(input_string) / sizeof(input_string[0]);
+  std::string input_string;
 
   std::cout << "Vvedite stroku sostojashchuju iz 0 i 1: ";
-  std::cin.getline(input_string, input_count);
+  std::getline(std::cin, input_string);
 
-  for (int i = 0; input_string[i] != '\0'; i++) {
-    if (input_string[i] != '0' && input_string[i] != '1') {
-      std::cout << "Nekorrektnij vvod: " << input_string[i];
-      return 1;
-    }
+  const auto incorrect_value = std::find_if(std::cbegin(input_string),
+                                            std::cend(input_string),
+                                            [](char c) {
+                                              return c != '0' && c != '1';
+                                            });
+
+  if (incorrect_value != std::cend(input_string)) {
+    std::cerr << "Nekorrektnij vvod: " << *incorrect_value;
+    return 1;
   }
 
-  for (int i = 0; input_string[i] != '\0'; i++) {
-    int group_zero_count = 0;
-    while (input_string[i] == '0') {
-      ++group_zero_count;
-      ++i;
-    }
+  const std::size_t length{input_string.length()};
+  for (std::size_t i{0}; i < length; i++) {
+    auto group_zero_count = std::count_if(std::cbegin(input_string) + i,
+                                          std::cend(input_string),
+                                          [](const char i) {
+                                            return i == '0';
+                                          });
+
+    i += group_zero_count;
+
     if (group_zero_count != 0 && group_zero_count % 2 == 0) {
       while (group_zero_count-- > 0) {
         std::cout << '0';
@@ -34,11 +43,14 @@ int main() {
       std::cout << std::endl;
     }
 
-    int group_one_count = 0;
-    while (input_string[i] == '1') {
-      ++group_one_count;
-      ++i;
-    }
+    auto group_one_count = std::count_if(input_string.cbegin() + i,
+                                         input_string.cend(),
+                                         [](const char i) {
+                                            return i == '1';
+                                          });
+
+    i += group_one_count;
+
     if (group_one_count != 0 && group_one_count % 2 == 0) {
       while (group_one_count-- > 0) {
         std::cout << '1';

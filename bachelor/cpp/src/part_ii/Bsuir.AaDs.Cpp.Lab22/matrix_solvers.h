@@ -245,6 +245,6 @@ void out_roots(ostream& ostream,
     ostream << "x[" << i + 1 << "] = " << x[i] << " " << std::endl;
 }
 
-}  // namespace MyNamespace
+}  // namespace linear_equations
 
 #endif // !MATRIX_SOLVERS_H_

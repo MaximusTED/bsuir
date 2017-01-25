@@ -1,53 +1,60 @@
-// Copyright (c) 2015, reginell. All rights reserved.
+﻿// Copyright (c) 2015, reginell. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
 // Subject: Algorithms and Data structures (AaDs).
 // Lab work 2: Programming branching algorithms.
 
+#include <array>
 #include <cmath>
+#include <cstdlib>   // for EXIT_*
 #include <iostream>
 
 int main() {
+  using single_argument_function_ptr = double(*)(double);
+  const std::array<single_argument_function_ptr, 3> single_argument_functions = 
+  {
+    [](double x) { return std::sinh(x); },
+    [](double x) { return std::pow(x, 2); },
+    [](double x) { return std::exp(x); }
+  };
+
   double x, y;
-  int k;
+  std::size_t k;
 
   std::cout << "x: "; std::cin >> x;
   std::cout << "y: "; std::cin >> y;
   std::cout << "f [1 -> sh(x), 2 -> x^2, 3 -> exp(x)]: "; std::cin >> k;
 
-  double f;
-
-  switch (k) {
-    case 1: 
-      f = sinh(x);
-      break;
-    case 2: 
-      f = pow(x, 2);
-      break;
-    case 3: 
-      f = exp(x);
-      break;
-    default:
-      std::cerr << "The function is not choosen. Value "
-                << k
-                << " is not in the set of available ones: "
-                << "[" << 1 << "; " << 3 << "]"
-                << std::endl;
-      return 1;
+  if (k == 0 || k > single_argument_functions.size()) {
+    std::cerr << "The function is not choosen. Value "
+              << k
+              << " is not in the set of available ones: "
+              << "[" << 1 << "; " << single_argument_functions.size() << "]"
+              << std::endl;
+    return EXIT_FAILURE;
   }
 
-  double d;
+  const double f = (*single_argument_functions[k - 1])(x);
 
-  if (x > y) {
-    d = pow(fabs(f - y), 1 / 3.) + tan(f);
-  } else if (x < y) {
-    d = pow(y - f, 3) + cos(f);
-  } else {
-    d = pow(y + f, 2) + pow(x, 3);
-  }
+  using three_argument_function_ptr = double(*)(double x, double y, double f);
+  const std::array<three_argument_function_ptr, 3> three_argument_functions =
+  {
+    [](double, double y, double f) { 
+      return std::pow(std::fabs(f - y), 1 / 3.) + std::tan(f);
+    },
+    [](double, double y, double f) {
+      return std::pow(y - f, 3) + std::cos(f);
+    },
+    [](double x, double y, double f) { 
+      return std::pow(y + f, 2) + std::pow(x, 3);
+    }
+  };
+
+  const std::size_t i = x > y ? 0 : (x < y ? 1 : 2);
+  const double d = (*three_argument_functions[i])(x, y, f);
 
   std::cout << "function() = " << d << std::endl;
-  
-  return 0;
+
+  return EXIT_SUCCESS;
 }

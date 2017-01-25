@@ -6,6 +6,7 @@
 // Lab work 1: Linear algorithms. Math library.
 
 #include <cmath>
+#include <cstdlib>   // for EXIT_*
 #include <iostream>
 
 int main() {
@@ -15,14 +16,13 @@ int main() {
   std::cout << "y: "; std::cin >> y;
   std::cout << "z: "; std::cin >> z;
 
-  double a = fabs(cos(x) - cos(y));
-  double c = 1 + 2 * pow(sin(y), 2);
-
-  double d = pow(a, c);
-  double b = 1 + z + pow(z, 2) / 2 + pow(z, 3) / 3 + pow(z, 4) / 4;
-  double s = d * b;
+  const double a = std::fabs(std::cos(x) - std::cos(y)),
+    c = 1 + 2 * std::pow(std::sin(y), 2),
+    d = std::pow(a, c),
+    b = 1 + z + std::pow(z, 2) / 2 + std::pow(z, 3) / 3 + std::pow(z, 4) / 4,
+    s = d * b;
 
   std::cout << "function() = " << s << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }

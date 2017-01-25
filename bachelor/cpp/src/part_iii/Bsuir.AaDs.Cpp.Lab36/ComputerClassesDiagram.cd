@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Computer">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACACQAAAAAAAAAAAAAAAABAAAAAAAAAIAAA=</HashCode>
+      <FileName>main.cc</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Desktop">
+    <Position X="6.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQCAAAAQAAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>main.cc</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Monoblock">
+    <Position X="9" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAQAAAAAgAAAAAAAACAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>main.cc</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Portable">
+    <Position X="2.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAIAAAAAAAAQAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>main.cc</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Notebook">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAACAAAQAA=</HashCode>
+      <FileName>main.cc</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

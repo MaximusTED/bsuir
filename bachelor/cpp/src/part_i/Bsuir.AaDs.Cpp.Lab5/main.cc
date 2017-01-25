@@ -7,9 +7,10 @@
 
 #include <iostream>
 #include <iomanip>
+#include <vector>
 
 template<typename T, typename Y>
-inline T implicit_cast(Y value) {
+constexpr inline T implicit_cast(const Y& value) noexcept {
   return value;
 }
 
@@ -24,12 +25,13 @@ int main() {
     return 1;
   }
 
-  std::size_t un = implicit_cast<std::size_t>(n), 
-              um = implicit_cast<std::size_t>(m);
+  const std::size_t un = implicit_cast<std::size_t>(n),
+                    um = implicit_cast<std::size_t>(m);
 
-  double **mas = new double*[un];
-  for (std::size_t i = 0; i < un; i++)
-    mas[i] = new double[um];
+  auto mas = std::vector<std::vector<double>>(un);
+  for (auto &item : mas) {
+    item = std::vector<double>(um);
+  }
 
   for (std::size_t i = 0; i < un; i++) {
     for (std::size_t j = 0; j < um; j++) {
@@ -59,11 +61,6 @@ int main() {
       }
     }
   }
-
-  for (std::size_t i = 0; i < un; i++)
-    delete[] mas[i];
-
-  delete[] mas;
 
   return 0;
 }

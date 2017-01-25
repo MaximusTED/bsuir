@@ -94,45 +94,45 @@ double integral_by_3_rank_gauss_method(double (*func)(double),
   return step_half * s;
 }
 
-int get_h(double &h) {
+int get_h(double *h) {
   int r;
 
-  std::cout << "Vibirete shag:\n"
-            << "1 h = 0.2\n" << "2 h = 0.1\n" << "3 h = 0.05\n";
+  std::cout << "Choose the step:\n"
+            << "1. h = 0.2\n" << "2. h = 0.1\n" << "3. h = 0.05\n";
   std::cin >> r;
 
   switch (r) {
   case 1:
-    h = 0.2;
+    *h = 0.2;
     break;
   case 2:
-    h = 0.1;
+    *h = 0.1;
     break;
   case 3:
-    h = 0.05;
+    *h = 0.05;
     break;
   default:
-    std::cerr << "Vibrano ne dopustimoe zna4enie h" << std::endl;
+    std::cerr << "Vibrano ne dopustimoe znachenie h" << std::endl;
     return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;
 }
 
-int get_m(int &m) {
+int get_m(int *m) {
   int v;
-  std::cout << "Viberete m:\n1 m=10\n2 m=20\n3 m=40\n";
+  std::cout << "Choose m:\n1. m=10\n2. m=20\n3. m=40\n";
   std::cin >> v;
 
   switch (v) {
   case 1:
-    m = 10;
+    *m = 10;
     break;
   case 2:
-    m = 20;
+    *m = 20;
     break;
   case 3:
-    m = 40;
+    *m = 40;
     break;
   default:
     std::cerr << "Vibrano ne dopustimoe zna4enie m" << std::endl;
@@ -142,8 +142,8 @@ int get_m(int &m) {
   return EXIT_SUCCESS;
 }
 
-double get_diff(double left, double right) {
-  return fabs(fabs(left) - fabs(right));
+double get_values_distance(double left, double right) {
+  return std::fabs(left - right);
 }
 
 int main() {
@@ -156,14 +156,14 @@ int main() {
   std::cin >> b;
 
   double h;
-  int result_code = get_h(h);
+  int result_code = get_h(&h);
   if (result_code != EXIT_SUCCESS) return result_code;
 
   int m;
-  result_code = get_m(m);
+  result_code = get_m(&m);
   if (result_code != EXIT_SUCCESS) return result_code;
 
-  std::size_t n = static_cast<std::size_t>((b - a) / h);
+  const std::size_t n = static_cast<std::size_t>((b - a) / h);
   std::vector<double> X = std::vector<double>(n + 1),
                       Y = std::vector<double>(n + 1);
 
@@ -172,38 +172,44 @@ int main() {
     Y[i] = f(X[i]);
   }
 
-  std::vector<double> DY = dY_precise(X);
-  std::vector<double> dY = dY_approximate(Y, h);
+  const std::vector<double> DY = dY_precise(X);
+  const std::vector<double> dY = dY_approximate(Y, h);
 
-  std::vector<double> D2Y = d2Y_precise(X);
-  std::vector<double> d2Y = d2Y_approximate(Y, h);
+  const std::vector<double> D2Y = d2Y_precise(X);
+  const std::vector<double> d2Y = d2Y_approximate(Y, h);
 
   std::vector<double> diff_dY = std::vector<double>(n + 1),
                       diff_d2Y = std::vector<double>(n + 1);
 
   // Разница между точными и аппроксимированными значениями производных.
   for (std::size_t i = 0; i <= n; i++) {
-    diff_dY[i] = get_diff(dY[i], DY[i]);
-    diff_d2Y[i] = get_diff(d2Y[i], D2Y[i]);
+    diff_dY[i] = get_values_distance(dY[i], DY[i]);
+    diff_d2Y[i] = get_values_distance(d2Y[i], D2Y[i]);
   }
 
   std::cout << "X\tY\tdY\tDY\tdiff1\td2Y\tD2Y\tdiff2\n";
-  
+
   for (std::size_t i = 0; i <= n; i++)
     printf("%2.1f\t%4.3f\t%4.3f\t%4.3f\t%5.4f\t%4.3f\t%4.3f\t%5.4f\n",
       X[i], Y[i], dY[i], DY[i], diff_dY[i], d2Y[i], D2Y[i], diff_d2Y[i]);
 
-  // Интеграл точно.
-  double Ip = integral_precise(a, b);
-  std::cout << std::endl << "Precise integral = " << Ip << std::endl;
+  std::cout.precision(15);
 
-  // Интеграл аппроксимированно.
-  double Ia = integral_by_3_rank_gauss_method(&f, a, b, m);
-  std::cout << "Approximate integral = " << Ia << std::endl;
+  // Интеграл точно.
+  const double precise_integral_value = integral_precise(a, b);
+  std::cout << std::endl << "Precise integral = " 
+            << precise_integral_value << std::endl;
+
+  // Интеграл аппроксимированно(приближенно).
+  const double approximate_integral_value = integral_by_3_rank_gauss_method(&f, a, b, m);
+  std::cout << "Priblizhenno integral = " << approximate_integral_value << std::endl;
 
   // Разница между точными и аппроксимированными значениями интегралов.
-  double diffI = get_diff(Ia, Ip);
-  std::cout << "Diff approximate & precise integrals = " << diffI << std::endl;
+  const double approximate_precise_intragral_values_distance =
+    get_values_distance(approximate_integral_value, precise_integral_value);
+  std::cout << "Diff approximate & precise integrals = " 
+            << approximate_precise_intragral_values_distance
+            << std::endl;
 
   return 0;
 }
