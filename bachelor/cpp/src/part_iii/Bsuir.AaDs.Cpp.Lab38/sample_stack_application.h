@@ -1,93 +1,82 @@
-﻿#pragma once
+﻿// Copyright (c) 2017, reginell. All rights reserved.
+// Use of this source code is governed by a BSD license that can be
+// found in the LICENSE file.
+
+#pragma once
 
 #include <iostream>
-#include "monoblock.h"
 #include "laptop.h"
-#include "tablet.h"
-#include "equals.h"
+#include "menu.h"
+#include "monoblock.h"
 #include "stack.h"
+#include "tablet.h"
 
-class ISampleStackApplication {
-public:
-  virtual void run() {
-  }
-  virtual ~ISampleStackApplication() {
-  }
+template <class TKey>
+class SampleStackApplication {
+ public:
+  virtual void Run();
+
+ private:
+  stack<TKey> stack_;
 };
 
-template <class T>
-class SampleStackApplication : public ISampleStackApplication {
-public:
-  virtual void run();
+template <class TKey>
+void SampleStackApplication<TKey>::Run() {
+  Menu<int> menu{"Choose action, non-int to exit to main menu:"};
+  menu.WithItem(1,
+                [&] {
+                  TKey value;
+                  std::cout << "> ";
+                  std::cin >> value;
+                  stack_.push(value);
+                },
+                "Add one")
+      .WithItem(2,
+                [&] {
+                  std::cout << stack_ << std::endl;
+                  system("pause");
+                },
+                "Show all")
+      .WithItem(3,
+                [&] {
+                  std::cout << "> ";
 
-private:
-  stack<T> stack_;
-};
+                  const auto item = stack_.pop();
 
-template <class T>
-void SampleStackApplication<T>::run() {
-  int ch;
+                  if (item.has_value()) {
+                    std::cout << item.value() << std::endl;
+                  }
 
-  do {
-    system("cls");
-    std::cout << "1 - Add one" << std::endl;
-    std::cout << "2 - Show all" << std::endl;
-    std::cout << "3 - Remove & show one" << std::endl;
-    std::cout << "4 - Remove all" << std::endl;
-    std::cout << "5 - Find item" << std::endl;
-    std::cout << "6 - Return to main menu" << std::endl;
-    std::cout << "(1-6): ";
-    
-    std::cin >> ch;
-    
-    switch (ch) {
-      case 1: {
-        T value;
-        std::cout << "> ";
-        std::cin >> value;
-        stack_.push(value);
-        break;
-      }
-      case 2:
-        std::cout << stack_ << std::endl;
-        system("pause");
-        break;
-      case 3: {
-        bool canPop = !stack_.empty();
+                  system("pause");
+                },
+                "Remove & show one")
+      .WithItem(4,  //-V112
+                [&] {
+                  while (!stack_.empty()) stack_.pop();
+                },
+                "Remove all")
+      .WithItem(5,
+                [&] {
+                  std::cout << "Enter item to find:" << std::endl;
 
-        T value = stack_.pop();
-        std::cout << "> ";
+                  TKey item;
+                  std::cin >> item;
 
-        if (canPop) {
-          std::cout << value << std::endl;
-        }
+                  const stack<TKey> found_items =
+                      stack_.find([&](auto key) { return key == item; });
 
-        system("pause");
-        break;
-      }
-      case 4:
-        while (!stack_.empty())
-          stack_.pop();
-        break;
-      case 5:
-      {
-        std::cout << "Enter item to find:" << std::endl;
+                  if (!found_items.empty()) {
+                    std::cout << "Stack of found items:" << std::endl
+                              << found_items;
+                  } else {
+                    std::cout << "No items as the following one are found:"
+                              << std::endl
+                              << item << std::endl;
+                  }
 
-        T item;
-        std::cin >> item;
+                  system("pause");
+                },
+                "Find item");
 
-        stack<T> found_items = stack_.find(equals<T>(item));
-
-        if (!found_items.empty()) {
-          std::cout << "Stack of found items:" << std::endl << found_items;
-        } else {
-          std::cout << "No items as the following one are found:" << std::endl
-                    << item << std::endl;
-        }
-        
-        system("pause");
-        break;
-      }
-    }
-  } while (ch != 6);
+  menu.Run();
 }

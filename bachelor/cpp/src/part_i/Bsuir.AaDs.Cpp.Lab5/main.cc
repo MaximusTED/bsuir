@@ -1,66 +1,82 @@
 // Copyright (c) 2015, reginell. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
+// Use of this source code is governed by a BSD license that can be
 // found in the LICENSE file.
 //
 // Subject: Algorithms and Data structures (AaDs).
 // Lab work 5: Pointers. Programming Dynamic Two-dimensional Arrays.
 
-#include <iostream>
+#include <cstdlib>
 #include <iomanip>
+#include <iostream>
 #include <vector>
 
-template<typename T, typename Y>
+template <typename T, typename Y>
 constexpr inline T implicit_cast(const Y& value) noexcept {
   return value;
 }
 
+template <class T>
+using vec = std::vector<T, std::allocator<T>>;
+
 int main() {
-  int n, m;
+  using i32 = int;
+  using usize = std::size_t;
+  using f64 = double;
+
+  i32 n, m;
 
   std::cout << "Vvedite razmeri matricy NxM: ";
-  std::cin >> n >> m;
+  if (!(std::cin >> n >> m)) {
+    std::cerr << "Razmeri doljni bit chelimi." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   if (0 >= n || m <= 0) {
     std::cerr << "Nevernoe znachenie razmera." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-  const std::size_t un = implicit_cast<std::size_t>(n),
-                    um = implicit_cast<std::size_t>(m);
+  const auto un{implicit_cast<usize>(n)}, um{implicit_cast<usize>(m)};
 
-  auto mas = std::vector<std::vector<double>>(un);
-  for (auto &item : mas) {
-    item = std::vector<double>(um);
+  auto mas{vec<vec<f64>>{un}};
+  for (auto& item : mas) {
+    item = vec<f64>(um);
   }
 
-  for (std::size_t i = 0; i < un; i++) {
-    for (std::size_t j = 0; j < um; j++) {
-      std::cout << "Matrica [" << i + 1 << "]["
-           << j + 1 << "]: ";
-      std::cin >> mas[i][j];
-    }
-  }
-
-  for (std::size_t i = 0; i < un; i++) {
-    for (std::size_t j = 0; j < um; j++)
-      std::cout << std::setw(6) << mas[i][j];
-
-    std::cout << std::endl;
-  }
-
-  for (std::size_t i = 0; i < um; i++) {
-    double sum = 0;
-
-    for (std::size_t k = 0; k < un; k++)
-      sum += mas[k][i];
-
-    for (std::size_t g = 0; g < un; g++) {
-      if (2 * mas[g][i] > sum) {
-        std::cout << "Osobij element stolbca " << i + 1 << ": "
-                  << mas[g][i] << std::endl;
+  for (usize i{0}; i < un; i++) {
+    for (usize j{0}; j < um; j++) {
+      std::cout << "Matrica [" << i + 1 << "][" << j + 1 << "]: ";
+      if (!(std::cin >> mas[i][j])) {
+        std::cerr << "Element dolzhen bit drobnim." << std::endl;
+        return EXIT_FAILURE;
       }
     }
   }
 
-  return 0;
+  for (const auto& v : mas) {
+    for (const auto& e : v) {
+      std::cout << std::setw(6) << e;
+    }
+
+    std::cout << std::endl;
+  }
+
+  for (usize i{0}; i < um; i++) {
+    f64 sum{0.0};
+
+    for (const auto& v : mas) {
+      sum += v[i];
+    }
+
+    for (const auto& v : mas) {
+      const auto& elem = v[i];
+
+      if (2.0 * elem > sum) {
+        std::cout << "Osobij element stolbca " << i + 1 << ": " << elem
+                  << std::endl;
+      }
+    }
+  }
+
+  return EXIT_SUCCESS;
 }

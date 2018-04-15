@@ -1,5 +1,5 @@
 // Copyright (c) 2016, reginell. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
+// Use of this source code is governed by a BSD license that can be
 // found in the LICENSE file.
 
 #ifndef NULL_STREAMS_H_
@@ -17,14 +17,13 @@ class nullstreambuf : public std::streambuf {
 
 // Null ostream.
 class nullostream : public std::ostream {
- public: 
-  nullostream() : std::ostream(&m_sb) { 
-  }
+ public:
+  nullostream() : std::ostream(&m_sb) {}
 
- private: 
+ private:
   nullstreambuf m_sb;
 };
 
 }  // namespace std_extensions
 
-#endif // !NULL_STREAMS_H_
+#endif  // !NULL_STREAMS_H_

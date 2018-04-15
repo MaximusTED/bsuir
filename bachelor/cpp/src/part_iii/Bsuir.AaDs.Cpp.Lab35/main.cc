@@ -1,7 +1,9 @@
-﻿// Lab 5: Templates.
+﻿// Copyright (c) 2017, reginell. All rights reserved.
+// Use of this source code is governed by a BSD license that can be
+// found in the LICENSE file.
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 #include "massive.h"
 
@@ -11,9 +13,9 @@ int main() {
   std::cin >> n;
 
   std::cout << "Input first array: " << std::endl;
-  
+
   using float_massive = massive<float>;
-  
+
   float_massive first{n};
   std::cin >> first;
 
@@ -21,14 +23,14 @@ int main() {
   std::cout << first << std::endl;
 
   std::cout << "Input second array: " << std::endl;
-  
+
   float_massive second{n};
   std::cin >> second;
 
   std::cout << "Second array: " << std::endl;
   std::cout << second << std::endl;
 
-  const massive<float> third{first * second};
+  const float_massive third{first * second};
   std::cout << "Array composition: " << std::endl;
   std::cout << third << std::endl;
 

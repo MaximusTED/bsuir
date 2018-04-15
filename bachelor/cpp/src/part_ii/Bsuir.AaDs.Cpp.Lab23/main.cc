@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2016, reginell. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
+// Use of this source code is governed by a BSD license that can be
 // found in the LICENSE file.
 //
 // Subject: Algorithms and Data structures (AaDs).
@@ -7,51 +7,51 @@
 
 #include <cmath>
 #include <cstddef>
-#include <cstdlib>   // For EXIT_*.
-#include <iostream>
+#include <cstdlib>  // For EXIT_*.
 #include <iomanip>
+#include <iostream>
 #include <limits>
 #include <vector>
+
+using f64 = double;
+using usize = std::size_t;
+template <typename T>
+using vec = std::vector<T, std::allocator<T>>;
 
 // a = -1, b = 4, m = 5, n = 5. POL
 
 struct point {
-  explicit point(double xi = 0, double yi = 0)
-    : x{xi}, y{yi} {
-  }
+  explicit point(f64 the_x = 0, f64 the_y = 0) : x{the_x}, y{the_y} {}
 
-  double x, y;
+  f64 x, y;
 };
 
-using function_values_table = std::vector<point>;
+using function_values_table = vec<point>;
 
-double f(double x) {
-  return x * x + 5 * std::cos(x);
-}
+f64 f(f64 x) noexcept { return x * x + 5 * std::cos(x); }
 
-std::vector<double> POL(const function_values_table& source_points_table,
-                        std::size_t n) {
-  auto a = std::vector<std::vector<double>>(n);
-  for (auto &row : a) {
-    row = std::vector<double>(n);
+vec<f64> POL(const function_values_table& source_points_table, usize n) {
+  auto a = vec<vec<f64>>(n);
+  for (auto& row : a) {
+    row = vec<f64>(n);
   }
-  auto c = std::vector<double>(n);
+  auto c = vec<f64>(n);
 
-  for (std::size_t k{0}; k < n; ++k) {
+  for (usize k{0}; k < n; ++k) {
     a[k][0] = 1;
-    std::size_t i = std::numeric_limits<std::size_t>::max();
+    usize i = std::numeric_limits<usize>::max();
 
-    for (std::size_t m{1}; m < n; ++m) {
+    for (usize m{1}; m < n; ++m) {
       ++i;
 
       if (i == k) {
         ++i;
       }
 
-      const double d = source_points_table[k].x - source_points_table[i].x;
+      const f64 d = source_points_table[k].x - source_points_table[i].x;
       a[k][m] = a[k][m - 1] / d;
 
-      for (std::size_t j{m - 1}; j >= 1; --j) {
+      for (usize j{m - 1}; j >= 1; --j) {
         a[k][j] = (a[k][j - 1] - a[k][j] * source_points_table[i].x) / d;
       }
 
@@ -59,10 +59,10 @@ std::vector<double> POL(const function_values_table& source_points_table,
     }
   }
 
-  for (std::size_t i{0}; i < n; ++i) {
-    double ci = 0;
+  for (usize i{0}; i < n; ++i) {
+    f64 ci = 0;
 
-    for (std::size_t k{0}; k < n; ++k) {
+    for (usize k{0}; k < n; ++k) {
       ci += a[k][i] * source_points_table[k].y;
     }
 
@@ -73,35 +73,35 @@ std::vector<double> POL(const function_values_table& source_points_table,
 }
 
 function_values_table POL(const function_values_table& source_points_table,
-                   std::size_t n,
-                   const std::vector<double>& xes) {
+                          usize n, const vec<f64>& xes) {
   const auto c = POL(source_points_table, n);
 
   const auto k = xes.size();
   auto approximate_points_table = function_values_table(k);
 
-  for (std::size_t i{0}; i < k; ++i) {
-    const double x = xes[i];
-    double y = 0;
+  for (usize i{0}; i < k; ++i) {
+    const f64 x = xes[i];
+    f64 y = 0;
 
-    for (std::size_t j{0}; j < n; ++j) {
+    for (usize j{0}; j < n; ++j) {
       y += c[j] * std::pow(x, j);
     }
 
-    approximate_points_table[i] = point(x, y);
+    approximate_points_table[i] = point{x, y};
   }
 
   return approximate_points_table;
 };
 
-function_values_table create_source_table(int a, int b, std::size_t m) {
-  std::cout << std::setw(9) << "X" << "\t" << std::setw(9) << "Y" << std::endl;
+function_values_table create_source_table(int a, int b, usize m) {
+  std::cout << std::setw(9) << "X"
+            << "\t" << std::setw(9) << "Y" << std::endl;
 
   auto source_points_table = function_values_table(m);
-  for (std::size_t i{0}; i < m; ++i) {
-    const double x = a + static_cast<double>(i) * (b - a) / (m - 1.0);
-    const double y = f(x);
-    source_points_table[i] = point(x, y);
+  for (usize i{0}; i < m; ++i) {
+    const f64 x = a + static_cast<f64>(i) * (b - a) / (m - 1.0);
+    const f64 y = f(x);
+    source_points_table[i] = point{x, y};
 
     std::cout << std::setw(9) << x << "\t" << std::setw(9) << y << std::endl;
   }
@@ -109,11 +109,11 @@ function_values_table create_source_table(int a, int b, std::size_t m) {
   return source_points_table;
 }
 
-std::vector<double> create_approximation_table(int a, int b) {
-  const std::size_t k{21};
+vec<f64> create_approximation_table(int a, int b) {
+  const usize k{21};
 
-  std::vector<double> xes = std::vector<double>(k);
-  for (std::size_t j{0}; j < k; j++) {
+  auto xes = vec<f64>(k);
+  for (usize j{0}; j < k; j++) {
     xes[j] = a + j * (b - a) / 20.0;
   }
 
@@ -121,16 +121,16 @@ std::vector<double> create_approximation_table(int a, int b) {
 }
 
 void print_comparison_table(
-  const function_values_table& approximated_points_table) {
+    const function_values_table& approximated_points_table) {
   std::cout << std::endl;
-  std::cout << std::setw(9) << "X" << "\t" << std::setw(9) << "Y" << "\t"
-            << std::setw(9) << "Y'" << "\t" << std::setw(9) << "e" << std::endl;
+  std::cout << std::setw(9) << "X"
+            << "\t" << std::setw(9) << "Y"
+            << "\t" << std::setw(9) << "Y'"
+            << "\t" << std::setw(9) << "e" << std::endl;
 
   for (const auto& approximated_point : approximated_points_table) {
-    double x = approximated_point.x,
-      y = f(x),
-      ya = approximated_point.y,
-      e = std::fabs(ya - y);
+    const f64 x = approximated_point.x, y = f(x), ya = approximated_point.y,
+              e = std::fabs(ya - y);
 
     std::cout << std::setw(9) << x << "\t" << std::setw(9) << y << "\t"
               << std::setw(9) << ya << "\t" << std::setw(9) << e << std::endl;
@@ -139,7 +139,7 @@ void print_comparison_table(
 
 int main() {
   int a, b;
-  std::size_t m, n;
+  usize m, n;
 
   std::cout << "a = ";
   std::cin >> a;
@@ -156,13 +156,13 @@ int main() {
   }
 
   std::cout.flags(std::ios::right);
-  std::cout.precision(4);
+  std::cout.precision(4);  //-V112
 
-  const function_values_table source_points_table = 
-    create_source_table(a, b, m);
-  const std::vector<double> xes = create_approximation_table(a, b);
+  const function_values_table source_points_table =
+      create_source_table(a, b, m);
+  const vec<f64> xes = create_approximation_table(a, b);
   const function_values_table approximated_points_table =
-    POL(source_points_table, n, xes);
+      POL(source_points_table, n, xes);
 
   print_comparison_table(approximated_points_table);
 

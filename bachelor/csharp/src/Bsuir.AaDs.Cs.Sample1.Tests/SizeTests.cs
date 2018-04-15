@@ -7,7 +7,7 @@ namespace Bsuir.AaDs.Cs.Sample1.Tests
     public class SizeTests
     {
         [TestMethod]
-        public void SizeConstructorPositiveCaseTest()
+        public void ShouldCreateCorrectPropsSizeTest()
         {
             const int expectedLength = 1;
             const int expectedWidth = 2;
@@ -19,21 +19,21 @@ namespace Bsuir.AaDs.Cs.Sample1.Tests
         }
 
         [TestMethod]
-        public void SizeConstructorIncorrectLengthTest()
+        public void ShouldThrowIfIncorrectLengthTest()
         {
             AssertIncorrectLength(-1);
             AssertIncorrectLength(0);
         }
 
         [TestMethod]
-        public void SizeConstructorIncorrectWidthTest()
+        public void ShouldThrowIfIncorrectWidthTest()
         {
             AssertIncorrectWidth(-1);
             AssertIncorrectWidth(0);
         }
 
         [TestMethod]
-        public void SizeToStringWorksTest()
+        public void ShouldToStringWorkTest()
         {
             const int expectedLength = 1;
             const int expectedWidth = 2;
@@ -46,12 +46,12 @@ namespace Bsuir.AaDs.Cs.Sample1.Tests
             Assert.AreEqual(expectedToString, actualToString, "ToString() is overridden.");
         }
 
-        private static void AssertTryCatch<TException>(Action thrownAction,
+        private static void AssertThrown<TException>(Action throwingAction,
             Action<TException> assertAction) where TException : Exception
         {
             try
             {
-                thrownAction();
+                throwingAction();
             }
             catch (TException e)
             {
@@ -65,14 +65,14 @@ namespace Bsuir.AaDs.Cs.Sample1.Tests
 
         private static void AssertIncorrectLength(int length)
         {
-            AssertTryCatch<ArgumentOutOfRangeException>(() => new Size(length, 1),
+            AssertThrown<ArgumentOutOfRangeException>(() => new Size(length, 1),
                 e => Assert.AreEqual("length", e.ParamName,
                         $"{nameof(Size.Length)} is validated during {nameof(Size)} construction."));
         }
 
         private static void AssertIncorrectWidth(int width)
         {
-            AssertTryCatch<ArgumentOutOfRangeException>(() => new Size(1, width),
+            AssertThrown<ArgumentOutOfRangeException>(() => new Size(1, width),
                 e => Assert.AreEqual("width", e.ParamName,
                         $"{nameof(Size.Width)} is validated during {nameof(Size)} construction."));
         }

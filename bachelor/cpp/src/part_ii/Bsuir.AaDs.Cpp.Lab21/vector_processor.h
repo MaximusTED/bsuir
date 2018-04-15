@@ -1,5 +1,5 @@
 // Copyright (c) 2016, reginell. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
+// Use of this source code is governed by a BSD license that can be
 // found in the LICENSE file.
 //
 // Subject: Algorithms and Data structures (AaDs).
@@ -8,16 +8,14 @@
 #ifndef BSUIR_AADS_CPP_LAB1_2_VECTOR_PROCESSOR_H_
 #define BSUIR_AADS_CPP_LAB1_2_VECTOR_PROCESSOR_H_
 
-#include <cstddef>   // For std::size_t.
+#include <cstddef>  // For std::size_t.
 #include <ctime>
+#include <tuple>
 #include <vector>
 
 namespace vector_processor {
 
-enum ProcessError {
-  kNoFirstPositive = 1,
-  KNoSecondPositive
-};
+enum ProcessError { kNoFirstPositive = 1, KNoSecondPositive };
 
 namespace details {
 
@@ -25,7 +23,8 @@ inline int random_value() {
   constexpr int kLowerBound = -100;
   constexpr int kUpperBound = 100;
 
-  static_assert(kLowerBound <= kUpperBound, "Lower bound should be <= upper bound.");
+  static_assert(kLowerBound <= kUpperBound,
+                "Lower bound should be <= upper bound.");
 
   return kLowerBound + rand() % (kUpperBound - kLowerBound + 1);
 }
@@ -34,10 +33,11 @@ inline int random_value() {
 
 /**
  * Prompts user for and reads vector size.
- * @param [in] vector_size The read vector size.
- * @return EXIT_SUCCESS on success, otherwise failure code.
+ * @return std::tuple<std::size_t, int> where first param is the read vector
+ * size & second is error code (EXIT_SUCCESS on success, otherwise failure
+ * code).
  */
-int read_vector_size(std::size_t *vector_size);
+std::tuple<std::size_t, int> read_vector_size();
 
 /**
  * Prompts user and reads vector.
@@ -48,41 +48,43 @@ int read_vector_size(std::size_t *vector_size);
  * @param [out] user_vector The vector to read. It's size should be at least
  *   vector_size.
  * @param [in] vector_size The count of vector elements are expected to be read.
- * @return EXIT_SUCCESS on success, otherwise failure code.
+ * @return std::tuple<std::size_t, int> where first param is the vector to read
+ * & second one is error code (EXIT_SUCCESS on success, otherwise failure code).
  */
-template<typename T>
-int read_vector(std::vector<T> &user_vector, std::size_t vector_size) {
-  int fill_type = 0;
+template <typename T>
+std::tuple<std::vector<T>, int> read_vector(const std::size_t vector_size) {
+  auto fill_type{0};
 
   std::cout << "Vector fill type (1 - random, 2 - manual type): ";
   std::cin >> fill_type;
 
+  auto user_vector = std::vector<T>{};
+  user_vector.resize(vector_size);
+
   switch (fill_type) {
-  case 1:
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+    case 1:
+      std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-    for (std::size_t i = 0; i < vector_size; i++) {
-      user_vector[i] = details::random_value();
-      std::cout << i + 1 << " Element: " << user_vector[i] << std::endl;
-    }
-    break;
-
-  case 2:
-    for (std::size_t i = 0; i < vector_size; i++) {
-      std::cout << i + 1 << " Element: ";
-      if (!(std::cin >> user_vector[i])) {
-        std::cerr << "Vector element should be int." << std::endl;
-        return -EINVAL;
+      for (auto& item : user_vector) {
+        item = details::random_value();
       }
-    }
-    break;
+      break;
 
-  default:
-    std::cerr << "Incorrect fill type. Allowed values: 1, 2." << std::endl;
-    return -EINVAL;
+    case 2:
+      for (auto& item : user_vector) {
+        if (!(std::cin >> item)) {
+          std::cerr << "Vector element should be int." << std::endl;
+          return std::make_tuple(user_vector, -EINVAL);
+        }
+      }
+      break;
+
+    default:
+      std::cerr << "Incorrect fill type. Allowed values: 1, 2." << std::endl;
+      return std::make_tuple(user_vector, -EINVAL);
   }
 
-  return EXIT_SUCCESS;
+  return std::make_tuple(user_vector, EXIT_SUCCESS);
 }
 
 /**
@@ -91,17 +93,16 @@ int read_vector(std::vector<T> &user_vector, std::size_t vector_size) {
  * @param [in] user_vector The vector to process.
  * @param [out] sum The sum of vector elements between first and last positive
  *   ones.
- * @param [out] count The count of vector elements between first and last
- *   positive ones.
- * @return EXIT_SUCCESS on success, otherwise failure code.
+ * @param [out] count
+ * @return std::tuple<T, std::size_t, int> where
+ *   T is the sum of vector elements between first and last positive ones.
+ *   std::size_t is the count of vector elements between first and last
+ *     positive ones.
+ *   int is EXIT_SUCCESS on success, otherwise failure code.
  */
-template<typename T>
-int user_defined_process_vector(const std::vector<T> &user_vector,
-                                T &sum,
-                                std::size_t &count) {
-  sum = {};
-  count = 0;
-
+template <typename T>
+std::tuple<T, std::size_t, int> user_defined_process_vector(
+    const std::vector<T>& user_vector) {
   const auto array_size = user_vector.size();
   constexpr auto kMaxPositiveIndex = std::numeric_limits<std::size_t>::max();
 
@@ -115,7 +116,7 @@ int user_defined_process_vector(const std::vector<T> &user_vector,
   }
 
   if (first_positive_index == kMaxPositiveIndex) {
-    return -kNoFirstPositive;
+    return std::make_tuple(T{}, 0, -kNoFirstPositive);
   }
 
   auto last_positive_index = kMaxPositiveIndex;
@@ -128,15 +129,18 @@ int user_defined_process_vector(const std::vector<T> &user_vector,
   }
 
   if (last_positive_index == kMaxPositiveIndex) {
-    return -KNoSecondPositive;
+    return std::make_tuple(T{}, 0, -KNoSecondPositive);
   }
+
+  T sum = {};
+  std::size_t count = {};
 
   for (auto i = first_positive_index + 1; i < last_positive_index; i++) {
     ++count;
     sum += user_vector[i];
   }
 
-  return EXIT_SUCCESS;
+  return std::make_tuple(sum, count, EXIT_SUCCESS);
 }
 
 /**
@@ -149,28 +153,27 @@ int user_defined_process_vector(const std::vector<T> &user_vector,
  * @param [in] count The count of vector elements.
  * @return result_code.
  */
-template<typename T>
+template <typename T>
 int notify_process_result(int result_code, T sum, std::size_t count) {
   switch (result_code) {
-  case EXIT_SUCCESS:
-    std::cout << "Sum between first and last positive values: "
-      << sum << std::endl;
-    std::cout << "Count of elements between first and last positive values: "
-      << count << std::endl;
-    break;
+    case EXIT_SUCCESS:
+      std::cout << "Sum between first and last positive values: " << sum
+                << std::endl;
+      std::cout << "Count of elements between first and last positive values: "
+                << count << std::endl;
+      break;
 
-  case -kNoFirstPositive:
-    std::cerr << "There is no positive elements." << std::endl;
-    break;
+    case -kNoFirstPositive:
+      std::cerr << "There is no positive elements." << std::endl;
+      break;
 
-  case -KNoSecondPositive:
-    std::cerr << "There is no second positive element." << std::endl;
-    break;
+    case -KNoSecondPositive:
+      std::cerr << "There is no second positive element." << std::endl;
+      break;
 
-  default:
-    std::cerr << "Unknown processing result: "
-      << result_code << std::endl;
-    break;
+    default:
+      std::cerr << "Unknown processing result: " << result_code << std::endl;
+      break;
   }
 
   return result_code;
@@ -178,4 +181,4 @@ int notify_process_result(int result_code, T sum, std::size_t count) {
 
 }  // namespace vector_processor.
 
-#endif // !BSUIR_AADS_CPP_LAB1_2_VECTOR_PROCESSOR_H_
+#endif  // !BSUIR_AADS_CPP_LAB1_2_VECTOR_PROCESSOR_H_

@@ -36,6 +36,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=10.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.10.2.1\lib\net\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -55,7 +59,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bsuir.AaDs.Cs.Lab3_1\Bsuir.AaDs.Cs.Sample1.csproj">
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bsuir.AaDs.Cs.Sample1\Bsuir.AaDs.Cs.Sample1.csproj">
       <Project>{3b7aa510-a53c-4bea-a081-b0745b8279dc}</Project>
       <Name>Bsuir.AaDs.Cs.Sample1</Name>
     </ProjectReference>

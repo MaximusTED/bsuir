@@ -1,120 +1,113 @@
-﻿#pragma once
+﻿// Copyright (c) 2017, reginell. All rights reserved.
+// Use of this source code is governed by a BSD license that can be
+// found in the LICENSE file.
 
-#include <iostream>
+#pragma once
+
 #include <functional>
 #include <iostream>
+#include <optional>  // C++17
 
-template<class T>
+template <class TKey>
 struct item {
-  item(T the_i, item *the_next)
-    : i(the_i), next(the_next) {
-  }
+  item(TKey the_i, item* the_next) : i(the_i), next(the_next) {}
 
-  T    i;
-  item *next;
+  const TKey i;
+  item* next;
 };
 
-template<class T>
+template <class TKey>
 class stack {
-  template<class U>
-  friend std::ostream& operator <<(std::ostream& stream, const stack<U>& stack);
+  template <class U>
+  friend std::ostream& operator<<(std::ostream& stream, const stack<U>& stack);
 
-public:
+ public:
   stack();
-  stack(const stack& s) : stack() {
-    //head = NULL;
-    item<T>* copy_head = s.head;
-    while (copy_head != NULL) {
+  stack(const stack& s) : stack{} {
+    item<TKey>* copy_head = s.head;
+    while (copy_head != nullptr) {
       push(copy_head->i);
       copy_head = copy_head->next;
     }
   }
-  stack& operator =(const stack& s) {
-    if (this != &s) //проверка
-    {
-      this->~stack(); //уничтожение себя
-      this->stack::stack(s); // присваивание в себя s
+  stack& operator=(const stack& s) {
+    if (this != &s) {
+      this->~stack();
+      this->stack::stack(s);
     }
     return *this;
   }
 
   ~stack();
 
-  void push(T value);
-  T pop();
+  void push(TKey value);
+  std::optional<TKey> pop();
 
   bool empty() const;
-  stack find(std::function<bool(const T&)> criteria) const;
+  stack find(std::function<bool(const TKey&)> criteria) const;
 
-private:
-  item<T> *head;
+ private:
+  item<TKey>* head;
 };
 
-template<class T>
-stack<T>::stack() : head() {
-}
+template <class TKey>
+stack<TKey>::stack() : head() {}
 
-template<class T>
-stack<T>::~stack() {
-  while (head != NULL) {
-    item<T> *p = head->next;
-    delete head;
-    head = p;
+template <class TKey>
+stack<TKey>::~stack() {
+  while (pop().has_value()) {
   }
 }
 
-template<class T>
-void stack<T>::push(T value) {
-  head = new item<T>(value, head);
+template <class TKey>
+void stack<TKey>::push(TKey value) {
+  head = new item<TKey>(value, head);
 }
 
-template<class T>
-T stack<T>::pop() {
-  if (head == NULL) {
-    std::cerr << "(stack is empty)" << std::endl;
-    return T();
+template <class TKey>
+std::optional<TKey> stack<TKey>::pop() {
+  if (head == nullptr) {
+    return {};
   }
 
-  item<T> *p = head;
+  item<TKey>* p = head;
   head = head->next;
-  T it = p->i;
+  TKey it = p->i;
   delete p;
 
   return it;
 }
 
-template<class T>
-bool stack<T>::empty() const {
-  return head == NULL;
+template <class TKey>
+bool stack<TKey>::empty() const {
+  return head == nullptr;
 }
 
-template<class T>
-stack<T> stack<T>::find(std::function<bool(const T&)> criteria) const {
-  stack<T> r;
-  item<T> *p = head;
-  while (p != NULL) {
-    const T i = p->i;
-    //это функция, которая определяет, подходит ли данный элемент в условия поиска
-    //в criteria функтор equals, вызывается его метод equals.operator ()
-    if (criteria(i) == true) {
-      r.push(i);
-    }
+template <class TKey>
+stack<TKey> stack<TKey>::find(std::function<bool(const TKey&)> criteria) const {
+  stack<TKey> items;
+  item<TKey>* p = head;
+
+  while (p != nullptr) {
+    const TKey i = p->i;
+
+    if (criteria(i)) items.push(i);
 
     p = p->next;
   }
 
-  return r;
+  return items;
 }
 
-template<class U>
-std::ostream& operator <<(std::ostream& stream, const stack<U>& stack) {
-  if (stack.head == NULL) {
+template <class U>
+std::ostream& operator<<(std::ostream& stream, const stack<U>& stack) {
+  if (stack.head == nullptr) {
     stream << "(stack is empty)" << std::endl;
     return stream;
   }
 
-  item<U> *p = stack.head;
-  while (p != NULL) {
+  item<U>* p = stack.head;
+  while (p != nullptr) {
     stream << p->i << std::endl;
     p = p->next;
   }

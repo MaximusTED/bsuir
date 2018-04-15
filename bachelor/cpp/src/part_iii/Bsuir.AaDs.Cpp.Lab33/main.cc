@@ -1,117 +1,108 @@
-﻿// Lab 3: String as class.
+﻿// Copyright (c) 2017, reginell. All rights reserved.
+// Use of this source code is governed by a BSD license that can be
+// found in the LICENSE file.
 
 #include <algorithm>
-#include <iostream> 
-#include <string.h> 
+#include <cstring>
+#include <iostream>
+#include <optional>  // C++17
 
 class String {
-  friend std::ostream& operator << (std::ostream& stream, const String& string);
-
-  friend void swap(String &l, String& r) noexcept;
+  friend std::ostream& operator<<(std::ostream& stream, const String& string);
+  friend void swap(String& l, String& r) noexcept;
 
  public:
-  explicit String(const char *s = "") {
-    content_ = new char[strlen(s) + 1];
-    strcpy(content_, s);
+  explicit String(std::size_t size) : data_{new char[size + 1]}, size_{size + 1} {}
+  explicit String(const char* s = "") : String{strlen(s)} {
+    strcpy(data_, s);
   }
 
-  String(const String& ob) : String(ob.content_) {
+  String(const String& string) : String{string.data_} {}
+  String(String&& string) noexcept : data_{string.data_}, size_{string.size_} {
+    string.data_ = nullptr;
+    string.size_ = 0;
   }
 
-  inline String& operator = (String) noexcept;
-
-  ~String() {
-    delete[] content_;
-    content_ = nullptr;
+  String& operator=(String&& string) noexcept {
+    swap(*this, string);
+    return *this;
+  }
+  String& operator=(const String& string) {
+    String tmp{string};
+    swap(*this, tmp);
+    return *this;
   }
 
-  String operator + (const String&) const;
-  String& operator += (const String&);
+  ~String() noexcept {
+    delete[] data_;
+    data_ = nullptr;
+    size_ = 0;
+  }
 
-  bool operator <= (const String& ob) const noexcept;
-  bool operator >= (const String& ob) const noexcept;
+  const char* c_str() const noexcept { return data_; }
+  // strlen equivalent.
+  std::size_t size() const noexcept { return size_ - 1; }
 
-  const char operator [] (const size_t i) const noexcept {
-    return content_[i];
+  String operator+(const String& ob) const {
+    String obj{size_ + ob.size_ + 1};
+    strcpy(obj.data_, data_);
+    strcat(obj.data_, ob.data_);
+    return obj;
+  }
+  String& operator+=(const String& string) { return *this = *this + string; }
+
+  bool operator<=(const String& s) const noexcept { return s.size_ <= size_; }
+  bool operator>=(const String& s) const noexcept { return s.size_ >= size_; }
+
+  const std::optional<char> operator[](const size_t i) const noexcept {
+    return i < size_ ? std::optional<char>(data_[i])
+                     : std::optional<char>(std::nullopt);
   }
 
  private:
-  char *content_;
+  char* data_;
+  std::size_t size_;
 };
 
-String String::operator + (const String& ob) const {
-  String obj;
-  obj.content_ = new char[strlen(content_) + strlen(ob.content_) + 1];
-  strcpy(obj.content_, content_);
-  strcat(obj.content_, ob.content_);
-  return obj;
-}
-
-String& String::operator += (const String& ob) {
-  *this = *this + ob;
-  return *this;
-}
-
-String& String::operator = (String ob) noexcept {
-  swap(*this, ob);
-  return *this;
-}
-
-bool String::operator <= (const String& ob) const noexcept {
-  return strlen(ob.content_) <= strlen(content_);
-}
-
-bool String::operator >= (const String& ob) const noexcept {
-  return strlen(ob.content_) >= strlen(content_);
-}
-
-std::ostream& operator <<(std::ostream& stream, const String& string) {
-  return stream << string.content_;
+std::ostream& operator<<(std::ostream& stream, const String& string) {
+  return stream << string.data_;
 }
 
 inline void swap(String& l, String& r) noexcept {
-  std::swap(l.content_, r.content_);
+  std::swap(l.data_, r.data_);
+  std::swap(l.size_, r.size_);
 }
 
 int main() {
-  constexpr char first_line[40]{"Line 1; "};
-  constexpr char second_line[40]{"Line 2; "};
+  constexpr char first_line[]{"Line 1; "};
+  constexpr char second_line[]{"Line 2; "};
 
-  String story{first_line};
-  std::cout << "First line: " << story << std::endl;
+  String first{first_line};
+  std::cout << "First line: " << first << std::endl;
 
-  String story2{second_line};
-  std::cout << "Second line: " << story2 << std::endl;
+  String second{second_line};
+  std::cout << "Second line: " << second.c_str() << std::endl;
 
-  String story3{story2 + story};
-  std::cout << "Second line + First line: " << story3 << std::endl;
+  String third{second + first};
+  std::cout << "Second line + First line: " << third << std::endl;
 
-  String story4;
-  story4 = story3;
-  std::cout << "Third line = Second line + First line: " << story4 << std::endl;
+  String fourth;
+  fourth = third;
+  std::cout << "Third line = Second line + First line: " << fourth << std::endl;
 
-  String story5;
-  story5 += story3;
-
-  std::cout << std::endl;
-
-  if (story <= story2) {
-    std::cout << story << " <= " << story2 << std::endl;
-  } else {
-    std::cout << story << " > " << story2 << std::endl;
-  }
-
-  if (story5 >= story3) {
-    std::cout << story5 << " >= " << story3 << std::endl;
-  } else {
-    std::cout << story5 << " < " << story3 << std::endl;
-  }
+  String fifth;
+  fifth += third;
 
   std::cout << std::endl;
+  std::cout << first << (first <= second ? " <= " : " > ") << second
+            << std::endl;
+  std::cout << fifth << (fifth >= third ? " >= " : " < ") << third << std::endl;
+  std::cout << std::endl;
 
-  String story6{first_line};
-  std::cout << "Character at zero-based index " << 5 << " of \"" << story6
-    << "\" is '" << story6[5] << "'" << std::endl;
+  String sixth{first_line};
+  std::cout << "Character at zero-based index " << 5 << " of \"" << sixth
+            << "\" with length " << sixth.size() << " is '"
+            << sixth[5].value_or('?') << "'" << std::endl;
 
   return 0;
 }

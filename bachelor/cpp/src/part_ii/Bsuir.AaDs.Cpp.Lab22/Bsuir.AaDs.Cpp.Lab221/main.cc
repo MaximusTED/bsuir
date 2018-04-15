@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2016, reginell. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
+// Use of this source code is governed by a BSD license that can be
 // found in the LICENSE file.
 //
 // Subject: Algorithms and Data structures (AaDs).
@@ -20,59 +20,73 @@
 //
 // q = -2.57, d = 2
 
-#include <cstdlib>   // std::size_t, EXIT_*
-#include <iostream>
+#include <cstdlib>  // usize, EXIT_*
 #include <fstream>
-#include <vector>    // std::vector
-#include <tuple>     // std::tuple
+#include <iostream>
+#include <tuple>   // std::tuple
+#include <vector>  // std::vector
 
 #include "../matrix_solvers.h"
 #include "../null_streams.h"
 
 namespace {
 
-template<typename T>
-int run_main() {
-  std_extensions::nullostream null_cout;
+template <typename T>
+using vec = std::vector<T, std::allocator<T>>;
 
-  std::size_t n;
-  std::vector<std::vector<T>> matrix;
-  std::vector<T> b;
+using usize = std::size_t;
+using f64 = double;
+
+template <typename T>
+int run_main() {
+  std_extensions::nullostream cnull;
+
+  usize n;
+  vec<vec<T>> matrix;
+  vec<T> b;
   int result_code;
 
+  using namespace linear_equations;
+
   // Читаем с клавиатуры.
-  std::tie(matrix, b, n, result_code) = linear_equations::
-    in_matrixes<T>(std::cin, std::cout);
-  if (result_code != EXIT_SUCCESS) return result_code;
+  std::tie(matrix, b, n, result_code) = in_matrixes<T>(std::cin, std::cout);
+  if (result_code != EXIT_SUCCESS) {
+    return result_code;
+  }
 
   // Пишем в файл данные.
   std::ofstream out_data_file("data.txt");
-  if (!out_data_file) return EXIT_FAILURE;
+  if (!out_data_file) {
+    return EXIT_FAILURE;
+  }
 
-  linear_equations::out_matrixes(out_data_file, matrix, b);
+  if (!out_matrixes(out_data_file, matrix, b)) return EXIT_FAILURE;
 
   // Читаем из файла.
   std::ifstream in_data_file("data.txt");
-  if (!in_data_file) return EXIT_FAILURE;
+  if (!in_data_file) {
+    return EXIT_FAILURE;
+  }
 
-  std::tie(matrix, b, n, result_code) = linear_equations::
-    in_matrixes<T>(in_data_file, null_cout);
-  if (result_code != EXIT_SUCCESS) return result_code;
+  std::tie(matrix, b, n, result_code) = in_matrixes<T>(in_data_file, cnull);
+  if (result_code != EXIT_SUCCESS) {
+    return result_code;
+  }
 
   // Считаем по Гауссу.
-  std::vector<T> x = linear_equations::evaluate_by_gauss(matrix, b);
+  const vec<T> x = evaluate_by_gauss(matrix, b);
 
   // Пишем в файл результаты.
   std::ofstream out_result_file("result.txt");
-  if (!out_result_file) return EXIT_FAILURE;
+  if (!out_result_file) {
+    return EXIT_FAILURE;
+  }
 
-  linear_equations::out_roots(out_data_file, x);
+  out_roots(out_data_file, x);
 
   return EXIT_SUCCESS;
 }
 
 }  // namespace
 
-int main() {
-  return run_main<double>();
-}
+int main() { return run_main<f64>(); }

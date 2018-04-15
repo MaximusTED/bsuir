@@ -35,10 +35,7 @@
     <ClInclude Include="stack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stack_samples_application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="equals.h">
+    <ClInclude Include="menu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

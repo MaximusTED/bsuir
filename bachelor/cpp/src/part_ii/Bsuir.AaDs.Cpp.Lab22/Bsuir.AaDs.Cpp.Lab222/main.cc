@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2016, reginell. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
+// Use of this source code is governed by a BSD license that can be
 // found in the LICENSE file.
 //
 // Subject: Algorithms and Data structures (AaDs).
@@ -22,17 +22,17 @@
 //
 // q = -2.57, d = 2, e = 10^-4
 
-#include <iostream>
 #include <fstream>
-#include <vector>
+#include <iostream>
 #include <tuple>
+#include <vector>
 
 #include "../matrix_solvers.h"
 #include "../null_streams.h"
 
 namespace {
 
-template<typename T>
+template <typename T>
 int run_main() {
   std_extensions::nullostream null_cout;
 
@@ -44,30 +44,32 @@ int run_main() {
   T e;
 
   // Читаем с клавиатуры.
-  std::tie(matrix, b, n, result_code) = linear_equations::
-    in_matrixes(std::cin, std::cout, &e);
+  std::tie(matrix, b, n, result_code) =
+      linear_equations::in_matrixes(std::cin, std::cout, &e);
   if (result_code != EXIT_SUCCESS) return result_code;
 
   // Пишем в файл данные.
   std::ofstream out_data_file("data.txt");
   if (!out_data_file) return EXIT_FAILURE;
 
-  linear_equations::out_matrixes(out_data_file, matrix, b, &e);
+  if (!linear_equations::out_matrixes(out_data_file, matrix, b, &e)) {
+    return EXIT_FAILURE;
+  }
 
   // Читаем из файла.
   std::ifstream in_data_file("data.txt");
   if (!in_data_file) return EXIT_FAILURE;
 
-  std::tie(matrix, b, n, result_code) = linear_equations::
-    in_matrixes(in_data_file, null_cout, &e);
+  std::tie(matrix, b, n, result_code) =
+      linear_equations::in_matrixes(in_data_file, null_cout, &e);
   if (result_code != EXIT_SUCCESS) return result_code;
 
   std::size_t k;
   const T w = 1;
 
   // Считаем по Зейделю.
-  const std::vector<T> x = linear_equations::
-    evaluate_by_zeidel(matrix, b, e, w, &k);
+  const std::vector<T> x =
+      linear_equations::evaluate_by_zeidel(matrix, b, e, w, &k);
 
   // Считаем невязку.
   const T residual = linear_equations::evaluate_residual(matrix, b, x);
@@ -83,6 +85,4 @@ int run_main() {
 
 }  // namespace
 
-int main() {
-  return run_main<double>();
-}
+int main() { return run_main<double>(); }
