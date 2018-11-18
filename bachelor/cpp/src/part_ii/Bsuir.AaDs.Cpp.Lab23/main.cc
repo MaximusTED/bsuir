@@ -21,7 +21,7 @@ using vec = std::vector<T, std::allocator<T>>;
 // a = -1, b = 4, m = 5, n = 5. POL
 
 struct point {
-  explicit point(f64 the_x = 0, f64 the_y = 0) : x{the_x}, y{the_y} {}
+  explicit point(f64 the_x = 0, f64 the_y = 0) noexcept : x{the_x}, y{the_y} {}
 
   f64 x, y;
 };
@@ -99,7 +99,7 @@ function_values_table create_source_table(int a, int b, usize m) {
 
   auto source_points_table = function_values_table(m);
   for (usize i{0}; i < m; ++i) {
-    const f64 x = a + static_cast<f64>(i) * (b - a) / (m - 1.0);
+    const f64 x = a + static_cast<f64>(i) * (b * 1.0 - a) / (m - 1.0);
     const f64 y = f(x);
     source_points_table[i] = point{x, y};
 
@@ -114,7 +114,7 @@ vec<f64> create_approximation_table(int a, int b) {
 
   auto xes = vec<f64>(k);
   for (usize j{0}; j < k; j++) {
-    xes[j] = a + j * (b - a) / 20.0;
+    xes[j] = a + j * (b * 1.0 - a) / 20.0;
   }
 
   return xes;

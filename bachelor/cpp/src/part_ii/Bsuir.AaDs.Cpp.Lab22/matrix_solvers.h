@@ -160,7 +160,7 @@ vec<T> evaluate_by_zeidel(const vec<vec<T>> &matrix, const vec<T> &b, const T e,
   vec<T> x0 = vec<T>(n, 1);
 
   constexpr usize max_k = 1000;
-  T de;
+  T de{};
   *k = {};
 
   // For checking index range in cycles further.

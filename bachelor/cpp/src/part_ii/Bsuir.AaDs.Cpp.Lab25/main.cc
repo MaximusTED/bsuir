@@ -25,7 +25,7 @@ using vec = std::vector<T, std::allocator<T>>;
 f64 f(f64 x) noexcept { return std::pow(x, 2) + 5 * std::cos(x) - 3; }
 
 f64 MD(f64 a, f64 b, f64 e) noexcept {
-  f64 x[3], y[3];
+  f64 x[3], y[3]{};
   x[0] = a;
   x[1] = b;
   y[0] = f(x[0]);
@@ -33,7 +33,7 @@ f64 MD(f64 a, f64 b, f64 e) noexcept {
   do {
     x[2] = (x[0] + x[1]) / 2;
     y[2] = f(x[2]);
-    f64 v = y[0] * y[2];
+    const f64 v = y[0] * y[2];
 
     if (v > 0) {
       x[0] = x[2];
@@ -60,7 +60,7 @@ int main() {
   std::cout << "e = ";
   std::cin >> e;
 
-  const f64 h{(b - a) / m};
+  const f64 h{(b * 1.0 - a) / m};
   f64 X = a;
   f64 y{f(X)};
 

@@ -16,8 +16,8 @@ int main() {
   using single_argument_function_ptr = f64 (*)(f64);
 
   const std::array<single_argument_function_ptr, 3> single_argument_functions =
-      {[](f64 x) { return std::sinh(x); }, [](f64 x) { return std::pow(x, 2); },
-       [](f64 x) { return std::exp(x); }};
+      {[](f64 x) noexcept { return std::sinh(x); }, [](f64 x) noexcept { return std::pow(x, 2); },
+       [](f64 x) noexcept { return std::exp(x); }};
 
   f64 x, y;
   std::size_t k;
@@ -44,11 +44,12 @@ int main() {
   using three_argument_function_ptr = f64 (*)(f64 x, f64 y, f64 f);
 
   const std::array<three_argument_function_ptr, 3> three_argument_functions = {
-      [](f64, f64 y, f64 f) {
+      [](f64, f64 y, f64 f) noexcept {
         return std::pow(std::fabs(f - y), 1 / 3.) + std::tan(f);
+      }, [](f64, f64 y, f64 f) noexcept {
+        return std::pow(y - f, 3) + std::cos(f);
       },
-      [](f64, f64 y, f64 f) { return std::pow(y - f, 3) + std::cos(f); },
-      [](f64 x, f64 y, f64 f) { return std::pow(y + f, 2) + std::pow(x, 3); }};
+      [](f64 x, f64 y, f64 f) noexcept { return std::pow(y + f, 2) + std::pow(x, 3); }};
 
   const std::size_t i{x > y ? 0u : (x < y ? 1u : 2u)};
 

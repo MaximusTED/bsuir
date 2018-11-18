@@ -60,7 +60,7 @@ class Desktop : public Computer {
            << "Is Upgradeable: " << is_upgradeable_ << std::endl;
   }
 
-  virtual ~Desktop() { std::cout << "Is Desktop: true" << std::endl; }
+  ~Desktop() { std::cout << "Is Desktop: true" << std::endl; }
 
  private:
   const bool is_upgradeable_;
@@ -68,7 +68,7 @@ class Desktop : public Computer {
 
 class Monoblock : public Desktop {
  public:
-  Monoblock(const std::string& model = "MB", const bool is_compact = false)
+  Monoblock(const std::string& model = "MB", const bool is_compact = false) noexcept
       : Desktop{model, "Monoblock", false}, is_compact_{is_compact} {}
 
   std::ostream& writeTo(std::ostream& stream) const override {
@@ -85,7 +85,7 @@ class Monoblock : public Desktop {
     return stream;
   }
 
-  virtual ~Monoblock() { std::cout << "Is Monoblock: true" << std::endl; }
+  ~Monoblock() { std::cout << "Is Monoblock: true" << std::endl; }
 
  private:
   bool is_compact_;
@@ -102,7 +102,7 @@ class Portable : public Computer {
            << "Has Touchpad: " << has_touchpad_ << std::endl;
   }
 
-  virtual ~Portable() { std::cout << "Is Portable: true" << std::endl; }
+  ~Portable() { std::cout << "Is Portable: true" << std::endl; }
 
  private:
   const bool has_touchpad_;
@@ -111,7 +111,7 @@ class Portable : public Computer {
 class Notebook : public Portable {
  public:
   Notebook(const std::string& model = "NB",
-           const std::string& battery_type = "Li-ion")
+           const std::string& battery_type = "Li-ion") noexcept
       : Portable{model, "Notebook", true}, battery_type_{battery_type} {}
 
   std::ostream& writeTo(std::ostream& stream) const override {
@@ -128,7 +128,7 @@ class Notebook : public Portable {
     return stream;
   }
 
-  virtual ~Notebook() { std::cout << "Is Notebook: true" << std::endl; }
+  ~Notebook() { std::cout << "Is Notebook: true" << std::endl; }
 
  private:
   std::string battery_type_;

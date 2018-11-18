@@ -41,10 +41,10 @@ vec<f64> d2Y_precise(const vec<f64>& X) {
   return D2Y;
 }
 
-f64 i32egral_precise(f64 x) { return std::pow(x, 3) / 3 + 5 * std::sin(x); }
+f64 integral_precise(f64 x) noexcept { return std::pow(x, 3) / 3 + 5 * std::sin(x); }
 
-f64 i32egral_precise(f64 a, f64 b) {
-  return i32egral_precise(b) - i32egral_precise(a);
+f64 integral_precise(f64 a, f64 b) {
+  return integral_precise(b) - integral_precise(a);
 }
 
 vec<f64> dY_approximate(const vec<f64>& Y, f64 h) {
@@ -75,7 +75,7 @@ vec<f64> d2Y_approximate(const vec<f64>& Y, f64 h) {
   return d2Y;
 }
 
-f64 integral_by_3_rank_gauss_method(f64 (*func)(f64), f64 a, f64 b, i32 m) {
+f64 integral_by_3_rank_gauss_method(f64 (*func)(f64), f64 a, f64 b, i32 m) noexcept {
   const f64 step = (b - a) / m, step_half = step / 2;
 
   f64 x0 = a + step_half;
@@ -96,7 +96,7 @@ f64 integral_by_3_rank_gauss_method(f64 (*func)(f64), f64 a, f64 b, i32 m) {
 
 std::tuple<f64, i32> get_h() {
   i32 r;
-  f64 h;
+  f64 h{};
 
   std::cout << "Choose the step:\n"
             << "1. h = 0.2\n"
@@ -123,7 +123,7 @@ std::tuple<f64, i32> get_h() {
 }
 
 std::tuple<i32, i32> get_m() {
-  i32 v, m;
+  i32 v, m{};
   std::cout << "Choose m:\n1. m=10\n2. m=20\n3. m=40\n";
   std::cin >> v;
 
@@ -145,7 +145,7 @@ std::tuple<i32, i32> get_m() {
   return std::make_tuple(m, EXIT_SUCCESS);
 }
 
-f64 get_values_distance(f64 left, f64 right) { return std::fabs(left - right); }
+f64 get_values_distance(f64 left, f64 right) noexcept { return std::fabs(left - right); }
 
 i32 main() {
   i32 a, b;
@@ -196,7 +196,7 @@ i32 main() {
   std::cout.precision(15);
 
   // Интеграл точно.
-  const f64 precise_integral_value = i32egral_precise(a, b);
+  const f64 precise_integral_value = integral_precise(a, b);
   std::cout << std::endl
             << "Precise integral = " << precise_integral_value << std::endl;
 

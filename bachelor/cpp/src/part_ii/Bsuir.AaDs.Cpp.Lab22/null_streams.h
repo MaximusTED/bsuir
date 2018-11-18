@@ -12,7 +12,9 @@ namespace std_extensions {
 // Null stream buffer.
 class nullstreambuf : public std::streambuf {
  public:
-  int_type overflow(int_type c = traits_type::eof()) override { return c; }
+  int_type overflow(int_type c = traits_type::eof()) noexcept override {
+    return c;
+  }
 };
 
 // Null ostream.

@@ -41,37 +41,24 @@ template <typename T>
 int run_main() {
   std_extensions::nullostream cnull;
 
-  usize n;
-  vec<vec<T>> matrix;
-  vec<T> b;
-  int result_code;
-
   using namespace linear_equations;
 
   // Читаем с клавиатуры.
-  std::tie(matrix, b, n, result_code) = in_matrixes<T>(std::cin, std::cout);
-  if (result_code != EXIT_SUCCESS) {
-    return result_code;
-  }
+  auto [matrix, b, n, result_code] = in_matrixes<T>(std::cin, std::cout);
+  if (result_code != EXIT_SUCCESS) return result_code;
 
   // Пишем в файл данные.
   std::ofstream out_data_file("data.txt");
-  if (!out_data_file) {
-    return EXIT_FAILURE;
-  }
+  if (!out_data_file) return EXIT_FAILURE;
 
   if (!out_matrixes(out_data_file, matrix, b)) return EXIT_FAILURE;
 
   // Читаем из файла.
   std::ifstream in_data_file("data.txt");
-  if (!in_data_file) {
-    return EXIT_FAILURE;
-  }
+  if (!in_data_file) return EXIT_FAILURE;
 
   std::tie(matrix, b, n, result_code) = in_matrixes<T>(in_data_file, cnull);
-  if (result_code != EXIT_SUCCESS) {
-    return result_code;
-  }
+  if (result_code != EXIT_SUCCESS) return result_code;
 
   // Считаем по Гауссу.
   const vec<T> x = evaluate_by_gauss(matrix, b);

@@ -9,7 +9,7 @@
 class Unit {
  public:
   Unit(std::string name, unsigned health) noexcept
-    : name_{std::move(name)}, health_{health} {}
+      : name_{std::move(name)}, health_{health} {}
 
   virtual void reportState(std::ostream &out) const noexcept {
     out << name_ << " health: " << health_;
@@ -29,8 +29,8 @@ class Civil : public Unit {
   Civil(std::string name, unsigned health) noexcept : Unit{name, health} {}
 
   void reportState(std::ostream &out) const noexcept override {
-	Unit::reportState(out);
-	out << "." << std::endl;
+    Unit::reportState(out);
+    out << "." << std::endl;
   }
 
   void roarBattle(std::ostream &out) const noexcept override {
@@ -42,16 +42,16 @@ class Civil : public Unit {
 class Soldier : public Unit {
  public:
   Soldier(std::string name, unsigned health, unsigned damage) noexcept
-    : Unit{name, health}, damage_{damage} {}
+      : Unit{name, health}, damage_{damage} {}
 
   void reportState(std::ostream &out) const noexcept override {
-	  Unit::reportState(out);
-	  out << ", damage: " << damage_ << "." << std::endl;
+    Unit::reportState(out);
+    out << ", damage: " << damage_ << "." << std::endl;
   }
 
   void roarBattle(std::ostream &out) const noexcept override {
-	Unit::roarBattle(out);
-	out << "Don't move!" << std::endl;
+    Unit::roarBattle(out);
+    out << "Don't move!" << std::endl;
   }
 
  private:
@@ -61,12 +61,12 @@ class Soldier : public Unit {
 int main() {
   std::vector<std::unique_ptr<Unit>> units;
 
-  units.emplace_back(std::make_unique<Civil>(Civil{"Magnus", 20}));
-  units.emplace_back(std::make_unique<Soldier>(Soldier{"Khan", 50, 40}));
+  units.emplace_back(std::make_unique<Civil>("Magnus", 20));
+  units.emplace_back(std::make_unique<Soldier>("Khan", 50, 40));
 
   for (auto &unit : units) {
-	unit->reportState(std::cout);
-	unit->roarBattle(std::cout);
+    unit->reportState(std::cout);
+    unit->roarBattle(std::cout);
   }
 
   return 0;

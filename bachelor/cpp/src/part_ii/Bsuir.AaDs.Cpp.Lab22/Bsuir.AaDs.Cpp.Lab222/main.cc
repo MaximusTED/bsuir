@@ -64,7 +64,7 @@ int run_main() {
       linear_equations::in_matrixes(in_data_file, null_cout, &e);
   if (result_code != EXIT_SUCCESS) return result_code;
 
-  std::size_t k;
+  std::size_t k{0};
   const T w = 1;
 
   // Считаем по Зейделю.

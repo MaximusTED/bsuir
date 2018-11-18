@@ -12,9 +12,7 @@
 #include "vector_processor.h"
 
 int main() {
-  int result_code;
-  std::size_t vector_size;
-  std::tie(vector_size, result_code) = vector_processor::read_vector_size();
+  auto [vector_size, result_code] = vector_processor::read_vector_size();
 
   if (result_code != EXIT_SUCCESS) {
     std::cerr << "Incorrect vector size." << std::endl;

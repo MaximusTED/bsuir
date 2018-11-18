@@ -19,7 +19,7 @@ enum ProcessError { kNoFirstPositive = 1, KNoSecondPositive };
 
 namespace details {
 
-inline int random_value() {
+inline int random_value() noexcept {
   constexpr int kLowerBound = -100;
   constexpr int kUpperBound = 100;
 
